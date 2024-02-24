@@ -2,8 +2,14 @@ package com.example.plugins
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.html.*
+import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.html.body
+import kotlinx.html.h3
+import kotlinx.html.img
+import kotlinx.html.title
 import kotlinx.serialization.Serializable
 
 fun Application.configureRouting() {
@@ -53,7 +59,25 @@ fun Application.configureRouting() {
         }
         // endregion
 
-        
+        // region STATIC CONTENT
+        staticResources(remotePath = "/assets", basePackage = "static")
+        // endregion
+
+        // region STATIC CONTENT - TEMPLATING HTML
+        get("/welcome") {
+            val name  = call.request.queryParameters["name"]
+
+            call.respondHtml {
+                title = "Hello"
+                body {
+                    h3 {
+                        + "Welcome $name"
+                    }
+                    img (src = "logo.png")
+                }
+            }
+        }
+        // endregion
     }
 }
 
